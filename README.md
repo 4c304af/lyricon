@@ -1,5 +1,7 @@
 <!--suppress ALL -->
 
+> Cloud Music 适配分支：新增本机 Cloud Bridge v1 接口，支持云听 Expressive 的逐字歌词、播放进度和状态同步。安装、签名兼容性与协议见 [CLOUD-BRIDGE.md](CLOUD-BRIDGE.md)。本分支调试 APK 无法直接覆盖官方签名的词幕。
+
 <p align="center">
   <img src="resources/logo.svg" width="100" alt="词幕 Logo"/>
 </p>

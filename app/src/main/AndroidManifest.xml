@@ -22,6 +22,11 @@
         android:description="@string/app_description"
         android:theme="@style/Theme.DayNight">
 
+        <provider
+            android:name=".cloudbridge.CloudMusicBridgeProvider"
+            android:authorities="${applicationId}.cloudbridge"
+            android:exported="true" />
+
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"

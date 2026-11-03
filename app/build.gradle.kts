@@ -50,6 +50,7 @@ configure<LibraryExtension> {
 dependencies {
     // --- 模块依赖 ---
     implementation(project(":bridge"))
+    implementation(project(":lyric:bridge:provider"))
     implementation(project(":common"))
     implementation(project(":lyric:style"))
     implementation(project(":lyric:view"))
