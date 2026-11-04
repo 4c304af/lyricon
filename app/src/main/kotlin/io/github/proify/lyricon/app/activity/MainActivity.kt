@@ -174,16 +174,17 @@ class MainActivity : BaseActivity(), LyriconApp.XposedServiceStateListener {
     }
 
     private fun restartSystemUI() {
+        val result = Utils.killSystemUI()
+        if (result.result != 0) {
+            viewModel.showRestartFailedDialog.value = true
+            return
+        }
         if (viewModel.isWaitingForReboot.value) {
             saveCurrentVersionCode()
             lifecycleScope.launch {
                 delay(RESTART_DEBOUNCE_MS)
                 viewModel.setWaitingForReboot(false)
             }
-        }
-        val result = Utils.killSystemUI()
-        if (result.result == -1) {
-            viewModel.showRestartFailedDialog.value = true
         }
     }
 

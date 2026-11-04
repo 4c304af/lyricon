@@ -22,8 +22,8 @@ object LyricPrefs {
 
     const val DEFAULT_PACKAGE_NAME: String = LyricStylePrefs.DEFAULT_PACKAGE_NAME
 
-    private val packageStyleManager: SharedPreferences =
-        getSharedPreferences(LyricStylePrefs.PREF_NAME_PACKAGE_MANAGER)
+    private val packageStyleManager: SharedPreferences
+        get() = getSharedPreferences(LyricStylePrefs.PREF_NAME_PACKAGE_MANAGER)
 
     val basicStylePrefs: SharedPreferences
         get() = getSharedPreferences(LyricStylePrefs.PREF_NAME_BASE)

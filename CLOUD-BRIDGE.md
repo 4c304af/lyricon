@@ -5,7 +5,7 @@
 ## 安装与启用
 
 1. 音乐端使用云听 Expressive `0.5.0-md3e` 或以上，包名 `io.github.cloudmusic.expressive`。
-2. 词幕端使用本分支 `1.0.40.cloudbridge.1`，包名仍为 `io.github.proify.lyricon`，以兼容原模块桥接。安装到手机，不安装到 Pixel Watch。
+2. 词幕端使用本分支 `1.0.40.cloudbridge.2`，音乐端推荐 `0.5.1-md3e`；包名仍为 `io.github.proify.lyricon`，以兼容原模块桥接。安装到手机，不安装到 Pixel Watch。0.5.1 增加提供者元数据，云听可出现在词幕的歌词提供服务列表。
 3. 在模块管理器中启用词幕并按其原有要求配置 SystemUI 作用域、重启使模块生效；在音乐端设置中开启 Lyricon 对接。
 4. 播放一首有歌词的歌曲，检查播放、暂停、切歌、拖动进度和逐字歌词。系统模块未生效时，接口可接收数据，但状态栏不会显示歌词。
 
@@ -45,3 +45,9 @@ Song JSON 使用当前上游的 `Song` / `RichLyricLine` / `LyricWord` 模型；
 JDK 17、Android SDK 37（平台目录可能为 `android-37.0`）、Gradle Wrapper 9.3.1；运行 `gradlew.bat :lyricon:assembleDebug --no-configuration-cache`。调试构建无需官方签名私钥。发行构建沿用原来的 `RELEASE_STORE_FILE`、`RELEASE_STORE_PASSWORD`、`RELEASE_KEY_ALIAS`、`RELEASE_KEY_PASSWORD` 环境变量，必须使用维护者自己的签名。
 
 输出：`lyricon/build/outputs/apk/debug/lyricon-arm64-v8a-debug.apk`。保留上游包名是模块集成要求，因此此 APK 不能与官方词幕并行安装。
+
+## cloudbridge.2 实时设置修复
+
+SystemUI 的远程偏好包装器强引用变更监听器，避免 WeakHashMap/GC 使监听器消失；变更标记跨线程可见，样式读取与应用统一派发到主线程。应用侧的包样式管理器按当前服务连接取偏好实例，避免启动阶段缓存本地实例。系统界面重启失败时不再将新版本标记为已载入。
+
+安装此版本后，需要一次重新加载 SystemUI 才能使用新的模块代码；以后修改样式不应需要反复重启。若应用提示 Root 未授予，请在自己的管理器授权词幕后重试，或手动重启手机。设备测试使用强制 GC 验证监听器存活与即时通知，并检查已安装云听的提供者发现元数据。

@@ -9,6 +9,7 @@ package io.github.proify.lyricon.xposed.systemui.lyric
 import android.R.attr.name
 import android.content.SharedPreferences
 import android.os.Looper
+import android.os.Handler
 import android.util.Log
 import io.github.proify.lyricon.app.bridge.AppBridge
 import io.github.proify.lyricon.app.bridge.AppBridge.LyricGesturePrefs
@@ -41,8 +42,12 @@ object LyricPrefs {
     /** 全局偏好变更监听器，触发时刷新歌词视图配置 */
     private val globalSharedPreferenceChangeListener: SharedPreferences.OnSharedPreferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
-            LyricViewController.applyConfigurationUpdate(getLyricStyle())
-            Log.i(TAG, "global prefs changed")
+            // Remote preferences can notify on a Binder thread. Read the changed flags
+            // and apply view configuration together on the SystemUI main thread.
+            Handler(Looper.getMainLooper()).post {
+                LyricViewController.applyConfigurationUpdate(getLyricStyle())
+                Log.i(TAG, "global prefs changed")
+            }
         }
 
     /* ---------------- base style ---------------- */
@@ -258,18 +263,17 @@ object LyricPrefs {
     ) : StateSharedPreferences {
 
         /** 偏好是否已变更的标记 */
-        private var isChanged = false
+        @Volatile private var isChanged = false
 
-        init {
-            prefs.registerOnSharedPreferenceChangeListener { p, key ->
-                Log.i(
-                    TAG,
-                    "prefs changed: $name, key=$key, ${Thread.currentThread()},${Looper.myLooper()}"
-                )
+        // SharedPreferences implementations may hold listeners weakly. Keep this
+        // listener alive for as long as the cached wrapper, including after GC.
+        private val changeListener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
                 isChanged = true
                 orderPrefChangeListener.onSharedPreferenceChanged(p, key)
-                Log.i(TAG, "called listener $orderPrefChangeListener")
-            }
+        }
+
+        init {
+            prefs.registerOnSharedPreferenceChangeListener(changeListener)
         }
 
         override fun hasChanged(): Boolean = isChanged

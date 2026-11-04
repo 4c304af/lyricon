@@ -11,8 +11,8 @@ plugins {
 }
 
 extra["appPackageName"] = "io.github.proify.lyricon"
-extra["appVersionCode"] = 10051
-extra["appVersionName"] = "1.0.40.cloudbridge.1"
+extra["appVersionCode"] = 10052
+extra["appVersionName"] = "1.0.40.cloudbridge.2"
 extra["compileSdkVersion"] = 37
 extra["targetSdkVersion"] = 37
 extra["minSdkVersion"] = 29
